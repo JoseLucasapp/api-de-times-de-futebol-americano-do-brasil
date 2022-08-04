@@ -1,0 +1,38 @@
+version: "3"
+
+networks:
+  api-futebol-americano-brasil:
+    driver: bridge
+
+services:
+
+  mongo:
+    container_name: futebol-americano-brasil-mongo
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    env_file: .env
+    networks:
+      - api-futebol-americano-brasil
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+
+  api:
+    container_name: futebol-americano-brasil
+    restart: always
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/code
+      - ./node_modules:/code/node_modules
+    env_file: .env
+    depends_on:
+      - mongo
+    networks:
+      - api-futebol-americano-brasil
+
+volumes:
+  mongodb:
